@@ -42,6 +42,10 @@ module RailsSlack
       nil
     end
 
+    def state
+      result.state
+    end
+
     private
 
     def result
