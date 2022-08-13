@@ -8,6 +8,8 @@ class CreateRailsSlackTeams < ActiveRecord::Migration[6.0]
       t.string :token
       t.string :name
       t.string :scope
+      t.boolean :active
+      t.json :settings, default: {}
 
       t.timestamps
     end

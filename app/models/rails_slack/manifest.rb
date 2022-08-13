@@ -27,8 +27,6 @@ class RailsSlack::Manifest
   private
 
   def interactivity
-    return { is_enabled: false } unless RailsSlack.configuration.actions_controller.present?
-
     {
       is_enabled: true,
       request_url: rails_slack_actions_url

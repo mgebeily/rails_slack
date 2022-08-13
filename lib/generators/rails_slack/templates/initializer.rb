@@ -1,7 +1,7 @@
 RailsSlack.configure do |config|
   config.scopes = ['commands']
   config.commands = [{ command: '/ping', description: 'Pings the bot.' }]
-  config.events = []
+  config.events = ['app_uninstalled']
 
   config.client_id = ENV['SLACK_CLIENT_ID']
   config.client_secret = ENV['SLACK_CLIENT_SECRET']

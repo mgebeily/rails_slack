@@ -11,7 +11,7 @@ Before installing, I recommend committing anything outstanding just in case you 
 For a full, out-of-the-box installation, run:
 
 ```bash
-rails slack:initialize
+rails generate rails_slack:initialize
 ```
 This will:
 
@@ -24,7 +24,7 @@ This will:
 Slack allows you to upload an app manifest in lieu of configuring an app through their UI. This gem provides a helper for generating this manifest from your code. Simply run:
 
 ```bash
-rails slack:print_manifest.
+rails rails_slack:print_manifest.
 ```
 
 Note that for this to work correctly, you have to have `Rails.application.routes.default_url_options[:host]` set for your environment to generate absolute URLs accessible by slack. `ngrok` is invaluable for testing on local development environments!
@@ -35,7 +35,7 @@ After specifying events and commands in your `config/initializers/rails_slack` f
 Commands, events, and actions are all handled by controller methods corresponding to their names. For example, the default "/ping" command is handled in `slack/commands_controller.rb`:
 
 ```ruby
-class Slack::CommandsController < RailsSlack::CommandsController
+class RailsSlack::CommandsController < RailsSlack::Base::CommandsController
   def ping
     # Respond to the ping with a pong.
     render json: { text: 'pong' }
@@ -53,7 +53,7 @@ The `teams_controller` handles logic around the OAuth flow, including `RailsSlac
 By default, the `teams_controller` redirects to the root_url after creating a team. To override this, add a method `after_callback` to your `teams_controller` specifying the desired behavior:
 
 ```ruby
-class Slack::TeamsController < RailsSlack::TeamsController
+class RailsSlack::TeamsController < RailsSlack::Base::TeamsController
   def after_callback
     do_something
     redirect_to a_different_url
@@ -64,7 +64,7 @@ end
 Sometimes, it may be desirable to have another model "own" the `RailsSlack::Team`: for example, an existing `Organization` or `User` model corresponding to your own app-specific behavior. To facilitate this, `RailsSlack::Team` objects have an optional, polymorphic `owner` relation that allows you to specify such relations while still keeping the table relatively isolated. To easily set this, simply override the `owner` method on the `teams_controller`:
 
 ```ruby
-class Slack::TeamsController < RailsSlack::TeamsController
+class RailsSlack::TeamsController < RailsSlack::Base::TeamsController
   before_action :require_user
 
   def owner
