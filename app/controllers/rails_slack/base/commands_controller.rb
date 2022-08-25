@@ -4,7 +4,8 @@ class RailsSlack::Base::CommandsController < RailsSlack::ApplicationController
   def create
     return head(:not_found) unless valid_commands.include?(params[:command])
 
-    send(sanitize_command(params[:command]))
+    @action = sanitize_command(params[:command])
+    send(@action)
   end
 
   protected

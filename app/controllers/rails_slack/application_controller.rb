@@ -10,12 +10,12 @@ module RailsSlack
 
     def render_response(file = nil, response_type = 'ephemeral')
       @response_type = response_type
-      render file, layout: 'rails_slack/text', formats: [:text]
+      render file || @action, layout: 'rails_slack/text', formats: [:text]
     end
 
     def render_blocks(file = nil, response_type = 'ephemeral')
       @response_type = response_type
-      render file, formats: [:json]
+      render file || @action, formats: [:json]
     end
 
     def render_text(text)
