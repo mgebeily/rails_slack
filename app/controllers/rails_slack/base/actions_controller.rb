@@ -4,16 +4,25 @@ require_dependency "rails_slack/application_controller"
 
 class RailsSlack::Base::ActionsController < RailsSlack::ApplicationController
   def create
-    slack_params[:actions].each do |action|
-      # TODO: Make this parallelizable
-      @action = sanitize_action(action[:action_id])
-      send(@action, action)
+    if is_view_submission?
+      @action = sanitize_action(slack_params[:view][:callback_id])
+      send(@action, slack_params[:view])
+    else
+      slack_params[:actions].each do |action|
+        # TODO: Make this parallelizable
+        @action = sanitize_action(action[:action_id])
+        send(@action, action)
+      end
     end
 
     head :ok
   end
 
   protected
+
+  def is_view_submission?
+    slack_params[:type] == 'view_submission'
+  end
 
   def respond(file = nil, response_type = 'ephemeral')
     @response_type = response_type

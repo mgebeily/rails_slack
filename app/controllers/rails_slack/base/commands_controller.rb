@@ -11,7 +11,16 @@ class RailsSlack::Base::CommandsController < RailsSlack::ApplicationController
   protected
 
   def ping
-    render json: { text: pong }
+    render json: { text: 'pong' }
+  end
+
+  def open_modal(file = nil)
+    @trigger_id = params[:trigger_id]
+    @modal_name = file || @action
+
+    content = render_to_string(@modal_name, layout: 'rails_slack/modal', formats: [:json])
+
+    current_team.slack_client.views_open(JSON.parse(content).symbolize_keys)
   end
 
   def valid_commands
