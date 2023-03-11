@@ -8,15 +8,14 @@ class RailsSlack::Base::TeamsController < RailsSlack::ApplicationController
   def callback
     return head(:bad_request) unless params[:code].present?
 
-    team = Team.find_by(team_id: result.team.id)
-
     if team.present?
       team.update(
         owner: owner,
         token: result.access_token,
         name: result.team.name,
         scope: result.scope,
-        authed_user_id: result.authed_user.id
+        authed_user_id: result.authed_user.id,
+        **additional_attributes
       )
     else
       Team.create!(
@@ -25,14 +24,19 @@ class RailsSlack::Base::TeamsController < RailsSlack::ApplicationController
         token: result.access_token,
         name: result.team.name,
         scope: result.scope,
-        authed_user_id: result.authed_user.id
-      )  
+        authed_user_id: result.authed_user.id,
+        **additional_attributes
+      )
     end
 
     after_callback
   end
 
   protected
+
+  def team
+    @team ||= Team.find_by(team_id: result.team.id)
+  end
 
   def after_callback
     redirect_to '/'
@@ -41,6 +45,10 @@ class RailsSlack::Base::TeamsController < RailsSlack::ApplicationController
   # Override this to be an ActiveRecord model
   def owner
     nil
+  end
+
+  def additional_attributes
+    {}
   end
 
   def state
@@ -61,4 +69,3 @@ class RailsSlack::Base::TeamsController < RailsSlack::ApplicationController
     })
   end
 end
-

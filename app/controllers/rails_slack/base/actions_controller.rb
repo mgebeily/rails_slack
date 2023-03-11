@@ -7,6 +7,9 @@ class RailsSlack::Base::ActionsController < RailsSlack::ApplicationController
     if is_view_submission?
       @action = sanitize_action(slack_params[:view][:callback_id])
       send(@action, slack_params[:view])
+    elsif slack_params[:action_id].present?
+      action = sanitize_action(slack_params[:action_id])
+      render(json: send(action))
     else
       slack_params[:actions].each do |action|
         # TODO: Make this parallelizable
@@ -14,8 +17,6 @@ class RailsSlack::Base::ActionsController < RailsSlack::ApplicationController
         send(@action, action)
       end
     end
-
-    head :ok
   end
 
   protected
